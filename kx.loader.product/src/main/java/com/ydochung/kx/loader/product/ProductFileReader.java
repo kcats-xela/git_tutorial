@@ -1,37 +1,91 @@
+/****************************************
+   Author  :  SeungTack Baek, Alex Chung
+   Date    :  May 29, 2015
+*****************************************/
+
+/*******************************************************************
+ * Revision History
+ ----------------------------------------
+ Version 1: Created ProductFileReader
+ Version 2: a. Add new feature to read filename from args
+            b. Read file is now pipe-delimited format
+            c. Handle exception for parseDouble
+            d. Improve efficiency by adding grade as you read file
+            e. Include "finally" clause  
+            f. Decompose methods for high cohesion
+               -> Not sure what is the "best" way to do this.
+               -> I feel this is still low cohesion even after revision.
+********************************************************************/
+
+
 package com.ydochung.kx.loader.product;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class ProductFileReader {
 	public static void main(String[] args) {
-		String inputFile = "inputFile/products.txt";
-		ArrayList <Double> grades = new ArrayList <Double>();
-		readFileAndGetAverage(inputFile, grades);
-		
+		if (args.length > 0){
+			String inputFile = args[0];
+			analyizeData(inputFile);
+		}
+		else{
+			System.out.println("Invalid command line");
+			System.exit(1);			
+		}
 	}
 
-	public static void readFileAndGetAverage(String filename, ArrayList<Double> grades){
-		String inputFile = filename;
+	/*
+	 * Name: analyizeData
+	 * Description: Read a pipe-limited formatted file and extract grades 
+	 *              to calculate average
+	 * */
+	private static void analyizeData(String filename){
 		double sum = 0;
+		int numStudents = 0;
 		try{			
-			BufferedReader br = new BufferedReader(new FileReader(inputFile));
-			while (true){
-				String name  = br.readLine();
-				String grade = br.readLine();
-				if (name == null) break;
-				double d_grade = Double.parseDouble(grade);
-				grades.add(d_grade);
+			BufferedReader br = new BufferedReader(new FileReader(filename));
+			try{
+				String oneLine;
+				while ((oneLine = br.readLine()) != null){
+					String[] data = oneLine.split("\\|");
+					sum = calculateSum(data[1], sum);
+					numStudents++;
+				}
+				double result = calculateAverage(sum, numStudents);
+				System.out.println("Average is : " + result);				
 			}
-			int numStudents = grades.size();
-			for (int i = 0; i < numStudents; i++){
-				sum += grades.get(i);
+			finally{
+				br.close();
 			}
-			System.out.println("Average of all students: " + sum/numStudents);
-			br.close();
 		}
 		catch (IOException ex){
 			System.out.println("Can't open that file");
-		}	
+		}
+	}
+	
+	/*
+	 * Name: calculateSum
+	 * Description: Add all grades
+	 * */
+	private static double calculateSum(String grade, double sum){
+		double d_grade;
+		try{
+			d_grade = Double.parseDouble(grade);			
+		}
+		catch (NumberFormatException e){
+			System.out.println("Not a legal number.");
+			d_grade = Double.NaN;
+		}
+		return sum+d_grade;
+	}
+	
+	/*
+	 * Name: calculateAverage
+	 * Description: Calculate average
+	 * */
+	private static double calculateAverage(double sum, int numStudents){
+		return sum / numStudents;
 	}
 }
