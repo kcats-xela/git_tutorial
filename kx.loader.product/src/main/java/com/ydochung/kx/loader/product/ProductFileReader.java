@@ -1,5 +1,5 @@
 /****************************************
-   Author  :  SeungTack Baek, Alex Chung
+   Author  :  Alex Chung, SeungTack Baek
    Date    :  May 29, 2015
 *****************************************/
 
@@ -49,8 +49,7 @@ public class ProductFileReader {
 			try{
 				String oneLine;
 				while ((oneLine = br.readLine()) != null){
-					String[] data = oneLine.split("\\|");
-					sum = calculateSum(data[1], sum);
+					sum = calculateSum(extractGrade(oneLine), sum);
 					numStudents++;
 				}
 				double result = calculateAverage(sum, numStudents);
@@ -63,6 +62,15 @@ public class ProductFileReader {
 		catch (IOException ex){
 			System.out.println("Can't open that file");
 		}
+	}
+	
+	/*
+	 * Name: extractGrade
+	 * Description: Return string representation of a grade
+	 * */
+	private static String extractGrade(String oneLine){
+		String[] data = oneLine.split("\\|");
+		return data[1];
 	}
 	
 	/*
