@@ -48,7 +48,7 @@ public class FileReaderI {
 				while ((oneLine = br.readLine()) != null) {
 					String[] divider = oneLine.split("\\|");
 					studentNames.add(divider[0]);
-					studentGrades.add(convertStringToDouble(divider[1]));
+					studentGrades.add(convertStringToDouble(divider[1], 0));
 				}
 			} finally {
 				br.close();
@@ -58,22 +58,26 @@ public class FileReaderI {
 		}
 	}
 
-	public double convertStringToDouble(String grade) {
+	// need to get spec
+	public double convertStringToDouble(String grade, double defaulValue) {
 		double d_grade;
 		try {
 			d_grade = Double.parseDouble(grade);
 		}
 		catch (NumberFormatException e) {
 			System.out.println("Not a legal number.");
-			d_grade = Double.NaN;
+			d_grade = defaulValue ; // what happens when invalid grade is entered? (ignore)
 		}
 		return d_grade;
 	}
 	
 	public double getAverage(){
 		double sum = 0;
-		for(Double grade : studentGrades){
-			sum += grade;
+		
+		if(studentGrades != null) {
+			for(Double grade : studentGrades){ // if no null-check, NPE occurs (NullPointerException)
+				sum += grade;
+			}
 		}
 		return sum / getNumOfStudents();
 	}
