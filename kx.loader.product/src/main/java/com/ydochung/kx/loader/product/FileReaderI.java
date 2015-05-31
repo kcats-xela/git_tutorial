@@ -39,7 +39,8 @@ public class FileReaderI {
 		this.filename = filename;
 		generateList();
 	}
-
+	
+	// comment by baek
 	public void generateList() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filename));
