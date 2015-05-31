@@ -40,6 +40,7 @@ public class FileReaderI {
 		generateList();
 	}
 
+	// comment by Alex
 	public void generateList() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filename));
